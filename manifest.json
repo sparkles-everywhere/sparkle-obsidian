@@ -1,0 +1,10 @@
+{
+  "id": "sparkles",
+  "name": "Sparkles",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Animated sparkles overlay with customizable colors and settings",
+  "author": "Yeosangist",
+  "authorUrl": "https://github.com/Yeosangist",
+  "isDesktopOnly": false
+}
