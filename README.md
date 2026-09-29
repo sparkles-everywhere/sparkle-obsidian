@@ -46,10 +46,7 @@ Access the settings by navigating to **Settings → Community Plugins → Sparkl
 - **Max rotation** (0-45°): Maximum rotation angle for sparkles
 - **Fade in duration** (100-2000ms): Time for sparkles to fade in
 - **Fade out duration** (100-2000ms): Time for sparkles to fade out
-- **Color preset**: Choose from 60+ color schemes including:
-  - Basic colors (black, white, grey, etc.)
-  - Pride flags (rainbow, gay men, lesbian, bisexual, pansexual, transgender, etc.)
-  - Specific identity flags (non-binary, asexual, aromantic, genderfluid, and many more)
+- **Color preset**: Choose from 60+ color schemes.
 
 ## Color Presets
 
@@ -62,15 +59,6 @@ The plugin includes color presets for:
 ## Requirements
 
 - Obsidian 0.15.0 or higher
-
-## Credits
-
-- **Author**: Yeosangist
-- **Inspired by**: ...it's a long story at this point. But I just wanted some sparkles
-
-## License
-
-See the project repository for license information.
 
 ## Support
 
