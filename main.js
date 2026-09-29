@@ -429,7 +429,7 @@ class SparklePlugin extends Plugin {
         };
 
         // Single colors
-        if (preset.startsWith('#') || preset === 'black' || preset === 'white' || preset === 'grey') {
+        if (preset.startsWith('#') || preset === 'black' || preset === 'white' || preset === 'grey' || preset === 'red' || preset === 'orange' || preset === 'yellow' || preset === 'green' || preset === 'blue' || preset === 'purple' || preset === 'pink') {
             const singleColors = {
                 'black': '#000000',
                 'white': '#FFFFFF',
