@@ -1,6 +1,8 @@
 # Sparkles
 
 An Obsidian plugin that adds an animated sparkle overlay to your vault with customizable colors and settings.
+<br><br>
+![](https://imgur.com/ss3HLs2.png)
 
 ## Features
 
