@@ -21,7 +21,7 @@ class SparklePlugin extends Plugin {
         this.height = 0;
 
         // Load settings
-        this.loadSettings();
+        await this.loadSettings();
 
         // Install styles
         this.installStyles();
@@ -50,8 +50,26 @@ class SparklePlugin extends Plugin {
         }
     }
 
-    loadSettings() {
-        const settings = this.loadData() || {};
+    async loadSettings() {
+        let settings = {};
+        
+        // Try to load from data.json file first using Obsidian's vault API
+        try {
+            const dataPath = '.obsidian/plugins/sparkles/data.json';
+            if (await this.app.vault.adapter.exists(dataPath)) {
+                const data = await this.app.vault.adapter.read(dataPath);
+                settings = JSON.parse(data);
+                console.log('Sparkles: Settings loaded from data.json', settings);
+            }
+        } catch (e) {
+            console.log('Sparkles: Could not load from data.json, trying loadData()', e);
+        }
+        
+        // Fallback to Obsidian's loadData if data.json doesn't exist or failed
+        if (Object.keys(settings).length === 0) {
+            settings = this.loadData() || {};
+            console.log('Sparkles: Settings loaded from Obsidian storage', settings);
+        }
         
         this.settings = {
             sparkleCount: settings.sparkleCount ?? 15,
@@ -67,8 +85,18 @@ class SparklePlugin extends Plugin {
         };
     }
 
-    saveSettings() {
+    async saveSettings() {
+        // Save to Obsidian's storage
         this.saveData(this.settings);
+        
+        // Also save to data.json file for persistence using Obsidian's vault API
+        try {
+            const dataPath = '.obsidian/plugins/sparkles/data.json';
+            await this.app.vault.adapter.write(dataPath, JSON.stringify(this.settings, null, 2));
+            console.log('Sparkles: Settings saved to data.json', this.settings);
+        } catch (e) {
+            console.log('Sparkles: Could not save to data.json', e);
+        }
     }
 
     installStyles() {
@@ -81,7 +109,7 @@ class SparklePlugin extends Plugin {
                 width: 100vw;
                 height: 100vh;
                 pointer-events: none;
-                z-index: 9999;
+                z-index: 1;
                 display: block;
             }
         `;
@@ -92,13 +120,14 @@ class SparklePlugin extends Plugin {
         this.canvas = document.createElement('canvas');
         this.canvas.className = 'sparkle-canvas';
         
-        // Ensure body exists
-        if (!document.body) {
-            console.error('Sparkles: document.body not available');
+        // Attach to workspace container instead of body to avoid interfering with window chrome
+        const workspace = this.app.workspace.containerEl;
+        if (!workspace) {
+            console.error('Sparkles: Workspace container not available');
             return;
         }
         
-        document.body.appendChild(this.canvas);
+        workspace.appendChild(this.canvas);
         
         this.ctx = this.canvas.getContext('2d');
         if (!this.ctx) {
