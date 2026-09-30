@@ -16,6 +16,8 @@ class SparklePlugin extends Plugin {
         this.canvas = null;
         this.ctx = null;
         this.animationId = null;
+        this.headerOffsetTimer = null;
+        this.offsetBelowHeader = false;
         this.lastSpawnTime = 0;
         this.width = 0;
         this.height = 0;
@@ -39,6 +41,10 @@ class SparklePlugin extends Plugin {
     onunload() {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
+        }
+
+        if (this.headerOffsetTimer) {
+            clearTimeout(this.headerOffsetTimer);
         }
 
         if (this.canvas && this.canvas.parentNode) {
@@ -104,12 +110,12 @@ class SparklePlugin extends Plugin {
         this.styleEl.textContent = `
             .sparkle-canvas {
                 position: fixed;
-                top: 0;
+                top: var(--sparkle-top-offset, 0px);
                 left: 0;
                 width: 100vw;
-                height: 100vh;
+                height: calc(100vh - var(--sparkle-top-offset, 0px));
                 pointer-events: none;
-                z-index: 1;
+                z-index: 20;
                 display: block;
             }
         `;
@@ -120,14 +126,12 @@ class SparklePlugin extends Plugin {
         this.canvas = document.createElement('canvas');
         this.canvas.className = 'sparkle-canvas';
         
-        // Attach to workspace container instead of body to avoid interfering with window chrome
-        const workspace = this.app.workspace.containerEl;
-        if (!workspace) {
-            console.error('Sparkles: Workspace container not available');
+        if (!document.body) {
+            console.error('Sparkles: Document body not available');
             return;
         }
-        
-        workspace.appendChild(this.canvas);
+
+        document.body.appendChild(this.canvas);
         
         this.ctx = this.canvas.getContext('2d');
         if (!this.ctx) {
@@ -136,6 +140,12 @@ class SparklePlugin extends Plugin {
         }
         
         this.resizeCanvas();
+
+        this.headerOffsetTimer = window.setTimeout(() => {
+            this.offsetBelowHeader = true;
+            this.resizeCanvas();
+            this.headerOffsetTimer = null;
+        }, 1000);
         
         window.addEventListener('resize', () => this.resizeCanvas());
         
@@ -144,7 +154,12 @@ class SparklePlugin extends Plugin {
 
     resizeCanvas() {
         this.width = window.innerWidth;
-        this.height = window.innerHeight;
+        const header = this.offsetBelowHeader
+            ? document.querySelector('.workspace-tab-header-container')
+            : null;
+        const topOffset = header ? header.getBoundingClientRect().bottom : 0;
+        this.height = Math.max(0, window.innerHeight - topOffset);
+        this.canvas.style.setProperty('--sparkle-top-offset', `${topOffset}px`);
         this.canvas.width = this.width;
         this.canvas.height = this.height;
     }
