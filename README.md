@@ -60,6 +60,5 @@ The plugin includes color presets for:
 
 - Obsidian 0.15.0 or higher
 
-## Support
-
-For issues, feature requests, or questions, please open an issue on the project repository.
+## Notes
+Never had to deal with Obsidian's particular brand of fussy before, so the way the initial rendering works is kinda hacky. Attaching it to the document body is the only way to get the sparkles to show upon startup, but that blocks users from dragging the window, so I told it to wait and then resize to only render underneath the workspace tab header containers.
